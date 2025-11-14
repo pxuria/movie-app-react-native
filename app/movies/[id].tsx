@@ -1,9 +1,9 @@
 import { icons } from '@/constants/icons';
 import { fetchMovieDetails } from '@/services/api';
 import useFetch from '@/services/use-fetch';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface MovieInfoProps {
     label: string;
@@ -20,10 +20,29 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 const MovieDetails = () => {
     const { id } = useLocalSearchParams();
     const { data: movie, loading, error } = useFetch(() => fetchMovieDetails(id.toString()));
+
+    if (loading) {
+        return (
+            <ActivityIndicator
+                size='large'
+                color="#0000ff"
+                className="my-3 self-center" />
+        )
+    }
+
+    if (error) {
+        return (
+            <ActivityIndicator
+                size='large'
+                color="#0000ff"
+                className="my-3 self-center" />
+        )
+    }
     return (
         <View className='bg-primary flex-1'>
             <ScrollView contentContainerStyle={{
-                paddingBottom: 80
+                paddingBottom: 150,
+                paddingTop: 50,
             }}>
                 <View className=''>
                     <Image
@@ -59,7 +78,9 @@ const MovieDetails = () => {
                 </View>
             </ScrollView>
 
-            <TouchableOpacity className='absolute bottom-5 left-0 right-0 mx-5 bg-accent gap-4 rounded-lg py-3.5 flex flex-row items-center justify-center z-50'>
+            <TouchableOpacity
+                onPress={router.back}
+                className='absolute bottom-16 left-0 right-0 mx-5 bg-accent gap-4 rounded-lg py-3.5 flex flex-row items-center justify-center z-50'>
                 <Image source={icons.arrow} className='size-5 mr-1 mt-0.5 rotate-180' tintColor='#fff' />
                 <Text className='text-white font-semibold text-base'>Go Back</Text>
             </TouchableOpacity>
